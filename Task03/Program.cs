@@ -30,6 +30,28 @@ namespace Task03
     class Clock
     {
         public int Hours { get; set; }
+        public Clock() { }
+        public Clock(int hours)
+        {
+            Hours = hours;
+        }
+
+        public static implicit operator Clock(int min)
+        {
+            return new Clock(min / 60);
+        }
+
+        public static explicit operator int(Clock clock)
+        {
+            if (clock.Hours < 0)
+                throw new ArgumentException();
+            return clock.Hours * 60;
+        }
+
+        public override string ToString()
+        {
+            return Hours.ToString(); 
+        }
     }
 
     class MainClass
@@ -37,9 +59,10 @@ namespace Task03
         public static void Main(string[] args)
         {
             int minute = int.Parse(Console.ReadLine());
+            Clock clock = new Clock(0);
             try
             {
-                Clock clock = new Clock { Hours = int.Parse(Console.ReadLine()) };
+                clock = new Clock { Hours = int.Parse(Console.ReadLine()) };
             }
             catch (ArgumentException)
             {
