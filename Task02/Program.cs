@@ -32,6 +32,29 @@ namespace Task02
     {
         public decimal Population { get; set; }
         public decimal Area { get; set; }
+
+        public static State operator +(State state1, State state2)
+        {
+            if (state1.Area <= 0 || state2.Area <= 0)
+                throw new ArgumentException();
+            return new State { Area = state1.Area + state2.Area, Population = state1.Population + state2.Population };
+        }
+        public static bool operator >(State state1, State state2)
+        {
+            if (state1.Area <= 0 || state2.Area <= 0)
+                throw new ArgumentException();
+            return (state1.Population / state1.Area) < (state2.Population / state2.Area);
+        }
+        public static bool operator <(State state1, State state2)
+        {
+            if (state1.Area <= 0 || state2.Area <= 0)
+                throw new ArgumentException();
+            return (state1.Population / state1.Area) > (state2.Population / state2.Area);
+        }
+        public override string ToString()
+        {
+            return Area.ToString() + " " + Population.ToString();
+        }
     }
 
     class MainClass
@@ -39,6 +62,7 @@ namespace Task02
         public static void Main()
         {
             string[] strs = Console.ReadLine().Split();
+            State state3 = new State();
             try
             {
                 State state1 = new State { Area = int.Parse(strs[0]), Population = int.Parse(strs[1]) };
@@ -54,7 +78,7 @@ namespace Task02
                     Console.WriteLine(state2);
                 }
 
-                State state3 = state1 + state2;
+                state3 = state1 + state2;
             }
             catch (ArgumentException)
             {
