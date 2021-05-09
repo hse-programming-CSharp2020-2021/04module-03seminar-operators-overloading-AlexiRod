@@ -30,16 +30,111 @@ Fraction - упрощенная структура, представляющая
 
 public readonly struct Fraction
 {
-    private readonly int num;
-    private readonly int den;
+    private readonly int numerator;
+    private readonly int denomenator;
 
-    public Fraction(int numerator, int denominator)
+    public Fraction(int numerator, int denomenator)
     {
-        num = numerator;
-        den = denominator;
+        this.numerator = numerator;
+        this.denomenator = denomenator;
     }
 
-    public override string ToString() => $"{num}/{den}";
+
+    public static Fraction operator +(Fraction a, Fraction b)
+    {
+        int c = nok(a.denomenator, b.denomenator);
+
+        Fraction res = new Fraction(a.numerator * (c / a.denomenator) + b.numerator * (c / b.denomenator), c);
+        int soc = nod(res.numerator, res.denomenator);
+
+        if (soc != 0)
+            res = new Fraction(res.numerator / soc, res.denomenator / soc);
+
+        if (res.denomenator == 0)
+            throw new DivideByZeroException();
+
+        if (res.denomenator < 0)
+            res = new Fraction(-res.numerator, -res.denomenator);
+
+        return res;
+    }
+    public static Fraction operator -(Fraction a, Fraction b)
+    {
+        int c = nok(a.denomenator, b.denomenator);
+
+        Fraction res = new Fraction(a.numerator * (c / a.denomenator) - b.numerator * (c / b.denomenator), c);
+        int soc = nod(res.numerator, res.denomenator);
+
+        if (soc != 0)
+            res = new Fraction(res.numerator / soc, res.denomenator / soc);
+
+        if (res.denomenator == 0)
+            throw new DivideByZeroException();
+
+        if (res.denomenator < 0)
+            res = new Fraction(-res.numerator, -res.denomenator);
+
+        return res;
+    }
+    public static Fraction operator *(Fraction a, Fraction b)
+    {
+        Fraction res = new Fraction(a.numerator * b.numerator, a.denomenator * b.denomenator);
+        int soc = nod(res.numerator, res.denomenator);
+
+        if (soc != 0)
+            res = new Fraction(res.numerator / soc, res.denomenator / soc);
+
+        if (res.denomenator == 0)
+            throw new DivideByZeroException();
+
+        if (res.denomenator < 0)
+            res = new Fraction(-res.numerator, -res.denomenator);
+
+        return res;
+    }
+
+    public static Fraction operator /(Fraction a, Fraction b)
+    {
+        Fraction res = new Fraction(a.numerator * b.denomenator, a.denomenator * b.numerator);
+        int soc = nod(res.numerator, res.denomenator);
+
+        if (soc != 0)
+            res = new Fraction(res.numerator / soc, res.denomenator / soc);
+
+        if (res.denomenator == 0)
+            throw new DivideByZeroException();
+
+        if (res.denomenator < 0)
+            res = new Fraction(-res.numerator, -res.denomenator);
+
+        return res;
+    }
+
+    static int nod(int a, int b)
+    {
+        if (b < 0)
+            b = -b;
+        if (a < 0)
+            a = -a;
+        while (b > 0)
+        {
+            int temp = b;
+            b = a % b;
+            a = temp;
+        }
+        return a;
+    }
+    static int nok(int a, int b)
+    {
+        return Math.Abs(a * b) / nod(a, b);
+    }
+
+    public override string ToString()
+    {
+        if (denomenator == 1 || numerator == 0)
+            return numerator.ToString();
+        return numerator + "/" + denomenator;
+    }
 }
 
 public static class OperatorOverloading
@@ -48,7 +143,16 @@ public static class OperatorOverloading
     {
         try
         {
-            
+            string[] parts = Console.ReadLine().Split('/');
+            Fraction a = new Fraction(int.Parse(parts[0]), int.Parse(parts[1]));
+
+            parts = Console.ReadLine().Split('/');
+            Fraction b = new Fraction(int.Parse(parts[0]), int.Parse(parts[1]));
+
+            Console.WriteLine(a + b);
+            Console.WriteLine(a - b);
+            Console.WriteLine(a * b);
+            Console.WriteLine(a / b);
         }
         catch (ArgumentException)
         {
